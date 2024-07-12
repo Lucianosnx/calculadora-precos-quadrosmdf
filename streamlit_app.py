@@ -1,28 +1,18 @@
 import streamlit as st
 
 def calculate_price(width_cm, height_cm, markup, profit_margin, quantity, recurrence):
-    # Convertendo dimensões para metros
-    width = width_cm / 100.0
-    height = height_cm / 100.0
+    # Cálculo da área em centímetros quadrados
+    area = width_cm * height_cm
     
-    # Cálculo da área em metros quadrados
-    area = width * height
+    # Área do quadro de referência
+    reference_area = 35 * 31
     
-    # Cálculo da área de referência para o preço base
-    base_area = (35 / 100.0) * (31 / 100.0)
-    
-    # Preço base proporcional à área do quadro
-    base_price = (area / base_area) * 8
+    # Preço base usando regra de três
+    base_price = (area * 8) / reference_area
     
     # Adicionando a porcentagem de acordo com o markup
-    if markup == 1:
-        base_price *= 1.05
-    elif markup == 2:
-        base_price *= 1.10
-    elif markup == 3:
-        base_price *= 1.15
-    elif markup == 4:
-        base_price *= 1.20
+    markup_multiplier = 1 + markup / 100.0 * 5  # Calculando o multiplicador do markup
+    base_price *= markup_multiplier
     
     # Calculando o preço final com margem de lucro
     final_price = base_price * (1 + profit_margin)
