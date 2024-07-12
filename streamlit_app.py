@@ -17,6 +17,13 @@ st.title('Calculadora de Preços QuadrosMDF')
 largura_cm = st.number_input('Largura do quadro (em centímetros):', min_value=0.0, format="%.2f")
 altura_cm = st.number_input('Altura do quadro (em centímetros):', min_value=0.0, format="%.2f")
 
+# Calcula e mostra o preço base quando as dimensões são fornecidas
+if largura_cm and altura_cm:
+    area = largura_cm * altura_cm
+    area_referencia = 35 * 31
+    preco_base = (area * 8) / area_referencia
+    st.write(f"Preço base: R$ {preco_base:.2f}")
+
 multiplicadores = {1: 1, 2: 2, 3: 3, 4: 4}
 multiplicador = st.selectbox('Multiplicador do preço base:', options=list(multiplicadores.keys()))
 
