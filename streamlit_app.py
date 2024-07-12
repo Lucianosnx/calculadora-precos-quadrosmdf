@@ -1,58 +1,38 @@
 import streamlit as st
 
-# Função para calcular o preço dos quadros em MDF
-def calculate_price(width_cm, height_cm, markup_multiplier, profit_margin, quantity, recurrence, multiplier):
-    # Calcula a área em centímetros quadrados
-    area = width_cm * height_cm
-    # Define a área de referência
-    reference_area = 35 * 31
-    # Calcula o preço base usando regra de três
-    base_price = (area * 8) / reference_area
-    # Aplica o markup selecionado
-    base_price *= markup_multiplier
-    # Mostra o preço após markup
-    st.write(f"Preço após markup: R$ {base_price:.2f}")
-    # Calcula o preço final aplicando a margem de lucro
-    final_price = base_price * profit_margin
-    # Calcula o total considerando quantidade e recorrência
-    total_price = final_price * quantity * recurrence * multiplier
-    return total_price
+def calcular_preco(largura_cm, altura_cm, fator_complexidade, margem_lucro, quantidade, recorrencia, multiplicador):
+    area = largura_cm * altura_cm
+    area_referencia = 35 * 31
+    preco_base = (area * 8) / area_referencia
+    preco_base *= fator_complexidade
+
+    st.write(f"Preço após markup: R$ {preco_base:.2f}")
+    preco_final = preco_base * margem_lucro
+    preco_total = preco_final * quantidade * recorrencia * multiplicador
+    return preco_total
 
 st.title('Calculadora de Preços para Quadros em MDF')
 
-# Inputs para largura e altura do quadro
-width_cm = st.number_input('Largura do quadro (em centímetros):', min_value=0.0, format="%.2f")
-height_cm = st.number_input('Altura do quadro (em centímetros):', min_value=0.0, format="%.2f")
+largura_cm = st.number_input('Largura do quadro (em centímetros):', min_value=0.0, format="%.2f")
+altura_cm = st.number_input('Altura do quadro (em centímetros):', min_value=0.0, format="%.2f")
 
-# Calcula e mostra o preço base quando as dimensões são fornecidas
-if width_cm and height_cm:
-    area = width_cm * height_cm
-    reference_area = 35 * 31
-    base_price = (area * 8) / reference_area
-    st.write(f"Preço base: R$ {base_price:.2f}")
+fatores_complexidade = {1: 1.05, 2: 1.10, 3: 1.15, 4: 1.20}
+fator_complexidade = st.selectbox('Complexidade do design (1 a 4):', options=list(fatores_complexidade.keys()))
 
-# Seleção do markup pela complexidade
-markup_choices = {1: 1.05, 2: 1.10, 3: 1.15, 4: 1.20}
-markup = st.selectbox('Complexidade do design (1 a 4):', options=list(markup_choices.keys()), format_func=lambda x: f"{x} - {markup_choices[x]*100-100:.0f}%")
+margens_lucro = {1: 1.05, 2: 1.10, 3: 1.20, 4: 1.30}
+margem_lucro = st.selectbox('Margem de lucro:', options=list(margens_lucro.keys()))
 
-# Seleção da margem de lucro
-profit_margin_choices = {1: 1.05, 2: 1.10, 3: 1.20, 4: 1.30}
-profit_margin = st.selectbox('Margem de lucro:', options=list(profit_margin_choices.keys()), format_func=lambda x: f"{x} - {profit_margin_choices[x]*100-100:.0f}%")
+tipo = st.selectbox('Tipo:', ('Produto', 'Serviço'))
 
-# Seleção de produto ou serviço
-product_or_service = st.selectbox('Tipo:', ('Produto', 'Serviço'))
+quantidade = 1
+recorrencia = 1
+if tipo == 'Serviço':
+    quantidade = st.number_input('Quantidade:', min_value=1)
+    recorrencia = st.number_input('Recorrência:', min_value=1)
 
-# Configurações de quantidade e recorrência para serviços
-quantity = 1
-recurrence = 1
-if product_or_service == 'Serviço':
-    quantity = st.number_input('Quantidade:', min_value=1)
-    recurrence = st.number_input('Recorrência:', min_value=1)
+multiplicador = st.selectbox('Multiplicador do preço final:', options=(1, 2, 3, 4))
 
-# Seleção do multiplicador para o preço final
-multiplier = st.selectbox('Multiplicador do preço final:', options=(1, 2, 3, 4))
-
-# Botão para calcular o preço final
-if st.button('Calcular Preço'):
-    result = calculate_price(width_cm, height_cm, markup_choices[markup], profit_margin_choices[profit_margin], quantity, recurrence, multiplier)
-    st.write(f"Preço final: R$ {result:.2f}")
+# Atualização dinâmica do preço ao modificar qualquer entrada
+if largura_cm and altura_cm:
+    resultado = calcular_preco(largura_cm, altura_cm, fatores_complexidade[fator_complexidade], margens_lucro[margem_lucro], quantidade, recorrencia, multiplicador)
+    st.write(f"Preço final: R$ {resultado:.2f}")
