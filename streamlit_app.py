@@ -25,7 +25,7 @@ if width_cm and height_cm:
     st.write(f"Preço base: R$ {base_price:.2f}")
 
 markup_choices = {1: 1.05, 2: 1.10, 3: 1.15, 4: 1.20}
-markup = st.selectbox('Complexidade do design (1 a 4):', options=list(markup_choices.keys()), format_func=lambda x: f"{x} - {markup_choices[x]*100-100:.0 f}%")
+markup = st.selectbox('Complexidade do design (1 a 4):', options=list(markup_choices.keys()), format_func=lambda x: f"{x} - {markup_choices[x]*100-100:.0f}%")
 
 profit_margin = st.selectbox('Margem de lucro:', (0.05, 0.10, 0.20, 0.30))
 
