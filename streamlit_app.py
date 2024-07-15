@@ -1,7 +1,7 @@
 import streamlit as st
 import pandas as pd
 
-def calcular_preco(largura_cm, altura_cm, multiplicador, fator_complexidade, margem_lucro, quantidade, recorrencia, tipo_usuario):
+def calcular_preco(largura_cm, altura_cm, multiplicador, fator_complexidade, margem_lucro, quantidade, recorrencia, tipo, tipo_usuario):
     area = largura_cm * altura_cm
     area_referencia = 35 * 31
     preco_base = (area * 8) / area_referencia
@@ -11,7 +11,7 @@ def calcular_preco(largura_cm, altura_cm, multiplicador, fator_complexidade, mar
     detalhes_precos.append(('Preço Base', preco_base))
 
     preco_multiplicado = preco_base * multiplicador
-    preco_complexidade = preco_multiplicado * fator_complexibilidade
+    preco_complexidade = preco_multiplicado * fator_complexidade
 
     detalhes_precos.append(('Preço após Multiplicador', preco_multiplicado))
     detalhes_precos.append(('Preço após Complexidade', preco_complexidade))
@@ -19,35 +19,38 @@ def calcular_preco(largura_cm, altura_cm, multiplicador, fator_complexidade, mar
     preco_final = preco_complexidade * margem_lucro
     detalhes_precos.append(('Preço após Margem de Lucro', preco_final))
 
-    descontos_quantidade = {1: 2, 10: 0.9, 50: 0.8, 100: 0.7}
-    if tipo_usuario == 'Consumidor':
-        descontos_quantidade = {k: 1 - (1 - v) / 2 for k, v in descontos_quantidade.items()}
-    
-    desconto_qtd = descontos_quantidade[quantidade]
-    
-    preco_quantidade = preco_final * desconto_qtd
-    detalhes_precos.append(('Preço após Desconto de Quantidade', preco_quantidade))
-    
-    preco_recorrencia = preco_quantidade
-    if recorrencia > 0:
-        desconto_recorrencia = 1 - (recorrencia * 0.1)
+    if tipo == 'Serviço':
+        descontos_quantidade = {1: 2, 10: 0.9, 50: 0.8, 100: 0.7}
         if tipo_usuario == 'Consumidor':
-            desconto_recorrencia = 1 - (1 - desconto_recorrencia) / 2
+            descontos_quantidade = {k: 1 - (1 - v) / 2 for k, v in descontos_quantidade.items()}
         
-        preco_recorrencia = preco_quantidade * desconto_recorrencia
-        detalhes_precos.append(('Preço após Desconto de Recorrência', preco_recorrencia))
-    
-    preco_final = preco_recorrencia if recorrencia > 0 else preco_quantidade
+        desconto_qtd = descontos_quantidade[quantidade]
+        
+        preco_quantidade = preco_final * desconto_qtd
+        detalhes_precos.append(('Preço após Desconto de Quantidade', preco_quantidade))
+        
+        preco_recorrencia = preco_quantidade
+        if recorrencia > 0:
+            desconto_recorrencia = 1 - (recorrencia * 0.1)
+            if tipo_usuario == 'Consumidor':
+                desconto_recorrencia = 1 - (1 - desconto_recorrencia) / 2
+            
+            preco_recorrencia = preco_quantidade * desconto_recorrencia
+            detalhes_precos.append(('Preço após Desconto de Recorrência', preco_recorrencia))
+        
+        preco_final = preco_recorrencia if recorrencia > 0 else preco_quantidade
+    else:
+        preco_final = preco_complexidade * margem_lucro
 
     taxa_erro = 1.03
     preco_erro = preco_final * taxa_erro
-    detalhes_precos.append(('Preço após Taxa de Erro (3%)', preco_erro))
+    detalhes_precos.append(('Preço após Taxa de Erro', preco_erro))
     
     custo_aquisicao = 1.17
     preco_aquisicao = preco_erro * custo_aquisicao
-    detalhes_precos.append(('Preço após Custo de Aquisição (17%)', preco_aquisicao))
+    detalhes_precos.append(('Preço após Custo de Aquisição', preco_aquisicao))
     
-    preco_total = preco_aquisicao * quantidade
+    preco_total = preco_aquisicao * (quantidade if tipo == 'Serviço' else 1)
     detalhes_precos.append(('Preço Final', preco_total))
 
     return detalhes_precos
@@ -61,7 +64,7 @@ multiplicadores = {1: 1, 2: 2, 3: 3, 4: 4}
 multiplicador = st.selectbox('Multiplicador do preço base:', options=list(multiplicadores.keys()))
 
 opcoes_complexidade = {1: 1.05, 2: 1.10, 3: 1.15, 4: 1.20}
-fator_complexibilidade = st.selectbox('Complexidade do design (1 a 4):', options=list(opcoes_complexidade.keys()), format_func=lambda x: f"{x} - {opcoes_complexidade[x]*100-100:.0f}%")
+fator_complexidade = st.selectbox('Complexidade do design (1 a 4):', options=list(opcoes_complexidade.keys()), format_func=lambda x: f"{x} - {opcoes_complexidade[x]*100-100:.0f}%")
 
 opcoes_lucro = {1: 1.05, 2: 1.10, 3: 1.20, 4: 1.30}
 margem_lucro = st.selectbox('Margem de lucro:', options=list(opcoes_lucro.keys()), format_func=lambda x: f"{x} - {opcoes_lucro[x]*100-100:.0f}%")
@@ -70,7 +73,7 @@ tipo = st.selectbox('Tipo:', ('Produto', 'Serviço'))
 
 tipo_usuario = 'Empresa'
 quantidade = 1
-recorrencia = 1
+recorrencia = 0
 
 if tipo == 'Serviço':
     tipo_usuario = st.radio('Tipo de usuário:', ('Consumidor', 'Empresa'))
@@ -82,7 +85,7 @@ if tipo == 'Serviço':
     recorrencia = st.selectbox('Recorrência:', options=list(descontos_recorrencia_display.keys()), format_func=lambda x: f"{x} ({descontos_recorrencia_display[x]})")
 
 if largura_cm and altura_cm:
-    detalhes_precos = calcular_preco(largura_cm, altura_cm, multiplicadores[multiplicador], opcoes_complexidade[fator_complexibilidade], opcoes_lucro[margem_lucro], quantidade, recorrencia, tipo_usuario)
+    detalhes_precos = calcular_preco(largura_cm, altura_cm, multiplicadores[multiplicador], opcoes_complexidade[fator_complexidade], opcoes_lucro[margem_lucro], quantidade, recorrencia, tipo, tipo_usuario)
     
     df_precos = pd.DataFrame(detalhes_precos, columns=['Descrição', 'Preço (R$)'])
     st.table(df_precos)
