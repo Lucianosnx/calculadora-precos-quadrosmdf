@@ -22,7 +22,7 @@ def calcular_preco(largura_cm, altura_cm, multiplicador, fator_complexidade, mar
     if tipo == 'Serviço':
         descontos_quantidade = {1: 2, 10: 0.9, 50: 0.8, 100: 0.7}
         if tipo_usuario == 'Consumidor':
-            descontos_quantidade = {k: 1 - (1 - v) / 2 for k, v in descontos_quantidade.items()}
+            descontos_quantidade = {1: 2, 10: 0.95, 50: 0.9, 100: 0.85}
         
         desconto_qtd = descontos_quantidade[quantidade]
         
@@ -33,7 +33,7 @@ def calcular_preco(largura_cm, altura_cm, multiplicador, fator_complexidade, mar
         if recorrencia > 0:
             desconto_recorrencia = 1 - (recorrencia * 0.1)
             if tipo_usuario == 'Consumidor':
-                desconto_recorrencia = 1 - (1 - desconto_recorrencia) / 2
+                desconto_recorrencia = 1 - (recorrencia * 0.05)
             
             preco_recorrencia = preco_quantidade * desconto_recorrencia
             detalhes_precos.append(('Preço após Desconto de Recorrência', preco_recorrencia))
@@ -44,14 +44,18 @@ def calcular_preco(largura_cm, altura_cm, multiplicador, fator_complexidade, mar
 
     taxa_erro = 1.03
     preco_erro = preco_final * taxa_erro
-    detalhes_precos.append(('Preço após Taxa de Erro', preco_erro))
+    detalhes_precos.append(('Preço após Taxa de Erro (3%)', preco_erro))
     
     custo_aquisicao = 1.17
     preco_aquisicao = preco_erro * custo_aquisicao
-    detalhes_precos.append(('Preço após Custo de Aquisição', preco_aquisicao))
+    detalhes_precos.append(('Preço após Custo de Aquisição (17%)', preco_aquisicao))
     
     preco_total = preco_aquisicao * (quantidade if tipo == 'Serviço' else 1)
-    detalhes_precos.append(('Preço Final', preco_total))
+    if quantidade > 1 and tipo == 'Serviço':
+        detalhes_precos.append(('Preço Unitário', preco_aquisicao))
+        detalhes_precos.append(('Preço Final Total', preco_total))
+    else:
+        detalhes_precos.append(('Preço Final', preco_total))
 
     return detalhes_precos
 
@@ -59,6 +63,12 @@ st.title('Calculadora de Preços QuadrosMDF')
 
 largura_cm = st.number_input('Largura do quadro (em centímetros):', min_value=0.0, format="%.2f")
 altura_cm = st.number_input('Altura do quadro (em centímetros):', min_value=0.0, format="%.2f")
+
+if largura_cm and altura_cm:
+    area = largura_cm * altura_cm
+    area_referencia = 35 * 31
+    preco_base = (area * 8) / area_referencia
+    st.write(f"**Preço base: R$ {preco_base:.2f}**")
 
 multiplicadores = {1: 1, 2: 2, 3: 3, 4: 4}
 multiplicador = st.selectbox('Multiplicador do preço base:', options=list(multiplicadores.keys()))
