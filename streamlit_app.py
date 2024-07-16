@@ -27,6 +27,8 @@ def calcular_preco(largura_cm, altura_cm, multiplicador, mackup, margem_lucro, q
     preco_aquisicao = preco_erro * custo_aquisicao
     detalhes_precos.append(('Preço após Custo de Aquisição (17%)', preco_aquisicao))
 
+    desconto_texto = "0%"  # Inicialização padrão
+
     if tipo == 'Serviço':
         preco_aquisicao *= 2  # Aplicar taxa de serviço
         detalhes_precos.append(('Preço após Taxa de Serviço', preco_aquisicao))
