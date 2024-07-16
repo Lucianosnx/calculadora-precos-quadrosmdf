@@ -4,52 +4,57 @@ import pandas as pd
 def calcular_preco(largura_cm, altura_cm, multiplicador, mackup, margem_lucro, quantidade, recorrencia, tipo, tipo_usuario):
     area = largura_cm * altura_cm
     area_referencia = 35 * 31
-    custo_materia_prima = (area * 8) / area_referencia
+    custo_materia_prima = round((area * 8) / area_referencia, 2)
     
     detalhes_precos = []
 
     detalhes_precos.append(('Custo Matéria Prima', f"{custo_materia_prima:.2f}"))
 
-    preco_multiplicado = custo_materia_prima * multiplicador
-    diferenca_multiplicador = preco_multiplicado - custo_materia_prima
-    detalhes_precos.append(('Multiplicador', f"{preco_multiplicado:.2f} (+ {diferenca_multiplicador:.2f})"))
+    preco_multiplicado = round(custo_materia_prima * multiplicador, 2)
+    diferenca_multiplicador = round(preco_multiplicado - custo_materia_prima, 2)
+    detalhes_precos.append(('Multiplicador', f"+ {diferenca_multiplicador:.2f}"))
 
-    preco_mackup = preco_multiplicado * mackup
-    diferenca_mackup = preco_mackup - preco_multiplicado
-    detalhes_precos.append(('Mackup', f"{preco_mackup:.2f} (+ {diferenca_mackup:.2f})"))
+    preco_mackup = round(preco_multiplicado * mackup, 2)
+    diferenca_mackup = round(preco_mackup - preco_multiplicado, 2)
+    detalhes_precos.append(('Mackup', f"+ {diferenca_mackup:.2f}"))
 
-    preco_final = preco_mackup * margem_lucro
-    diferenca_lucro = preco_final - preco_mackup
-    detalhes_precos.append(('Margem de Lucro', f"{preco_final:.2f} (+ {diferenca_lucro:.2f})"))
+    preco_final = round(preco_mackup * margem_lucro, 2)
+    diferenca_lucro = round(preco_final - preco_mackup, 2)
+    detalhes_precos.append(('Margem de Lucro', f"+ {diferenca_lucro:.2f}"))
 
     taxa_erro = 1.03
-    preco_erro = preco_final * taxa_erro
-    diferenca_erro = preco_erro - preco_final
-    detalhes_precos.append(('Taxa de Erro (3%)', f"{preco_erro:.2f} (+ {diferenca_erro:.2f})"))
+    preco_erro = round(preco_final * taxa_erro, 2)
+    diferenca_erro = round(preco_erro - preco_final, 2)
+    detalhes_precos.append(('Taxa de Erro (3%)', f"+ {diferenca_erro:.2f}"))
     
     custo_aquisicao = 1.17
-    preco_aquisicao = preco_erro * custo_aquisicao
-    diferenca_aquisicao = preco_aquisicao - preco_erro
-    detalhes_precos.append(('Custo de Aquisição (17%)', f"{preco_aquisicao:.2f} (+ {diferenca_aquisicao:.2f})"))
+    preco_aquisicao = round(preco_erro * custo_aquisicao, 2)
+    diferenca_aquisicao = round(preco_aquisicao - preco_erro, 2)
+    detalhes_precos.append(('Custo de Aquisição (17%)', f"+ {diferenca_aquisicao:.2f}"))
 
-    desconto_texto = "0%" 
+    desconto_texto = "0%"
 
     if tipo == 'Serviço':
         preco_anterior = preco_aquisicao
-        preco_aquisicao *= 2  #taxa de serviço
-        diferenca_servico = preco_aquisicao - preco_anterior
-        detalhes_precos.append(('Taxa de Serviço (+100%)', f"{preco_aquisicao:.2f} (+ {diferenca_servico:.2f})"))
+        preco_aquisicao = round(preco_aquisicao * 2, 2)  #taxa de serviço
+        diferenca_servico = round(preco_aquisicao - preco_anterior, 2)
+        detalhes_precos.append(('Taxa de Serviço (+100%)', f"+ {diferenca_servico:.2f}"))
 
         preco_recorrencia = preco_aquisicao
         if recorrencia > 0:
             desconto_recorrencia = 1 - (recorrencia * 0.05) if tipo_usuario == 'Consumidor' else 1 - (recorrencia * 0.1)
-            preco_recorrencia = preco_aquisicao * desconto_recorrencia
-            diferenca_recorrencia = preco_recorrencia - preco_aquisicao
-            detalhes_precos.append(('Desconto de Recorrência', f"{preco_recorrencia:.2f} (- {abs(diferenca_recorrencia):.2f})"))
+            preco_recorrencia = round(preco_aquisicao * desconto_recorrencia, 2)
+            diferenca_recorrencia = round(preco_recorrencia - preco_aquisicao, 2)
+            detalhes_precos.append(('Desconto de Recorrência', f"- {abs(diferenca_recorrencia):.2f}"))
         preco_final = preco_recorrencia
 
     else:
         preco_final = preco_aquisicao
+
+    if tipo == 'Produto' and preco_final < 70:
+        diferenca_ajuste = 7
+        preco_final += diferenca_ajuste
+        detalhes_precos.append(('Ajuste de Preço (Abaixo de R$70)', f"+ {diferenca_ajuste:.2f}"))
 
     preco_total = preco_final
     desconto_qtd = 1
@@ -64,10 +69,10 @@ def calcular_preco(largura_cm, altura_cm, multiplicador, mackup, margem_lucro, q
             desconto_qtd = 0.85 if tipo_usuario == 'Consumidor' else 0.7
             desconto_texto = "15%" if tipo_usuario == 'Consumidor' else "30%"
         
-        preco_unitario_com_desconto = preco_total * desconto_qtd
-        diferenca_quantidade = preco_unitario_com_desconto - preco_total
-        detalhes_precos.append(('Desconto de Quantidade', f"{preco_unitario_com_desconto:.2f} (- {abs(diferenca_quantidade):.2f})"))
-        preco_total = preco_unitario_com_desconto * quantidade
+        preco_unitario_com_desconto = round(preco_total * desconto_qtd, 2)
+        diferenca_quantidade = round(preco_unitario_com_desconto - preco_total, 2)
+        detalhes_precos.append(('Desconto de Quantidade', f"- {abs(diferenca_quantidade):.2f}"))
+        preco_total = round(preco_unitario_com_desconto * quantidade, 2)
         detalhes_precos.append(('Preço Unitário', f"{preco_unitario_com_desconto:.2f}"))
         detalhes_precos.append((f'Quantidade', f"{quantidade}"))
     
