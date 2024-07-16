@@ -69,8 +69,7 @@ def calcular_preco(largura_cm, altura_cm, multiplicador, mackup, margem_lucro, q
         detalhes_precos.append(('Desconto de Quantidade', f"{preco_unitario_com_desconto:.2f} (- {abs(diferenca_quantidade):.2f})"))
         preco_total = preco_unitario_com_desconto * quantidade
         detalhes_precos.append(('Preço Unitário', f"{preco_unitario_com_desconto:.2f}"))
-    else:
-        detalhes_precos.append(('Preço Unitário', f"{preco_total:.2f}"))
+        detalhes_precos.append((f'Quantidade', f"{quantidade}"))
     
     detalhes_precos.append(('Preço Total', f"{preco_total:.2f}"))
 
