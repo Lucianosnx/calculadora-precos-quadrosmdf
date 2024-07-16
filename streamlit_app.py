@@ -32,13 +32,13 @@ def calcular_preco(largura_cm, altura_cm, multiplicador, mackup, margem_lucro, q
     diferenca_aquisicao = preco_aquisicao - preco_erro
     detalhes_precos.append(('Custo de Aquisição (17%)', f"{preco_aquisicao:.2f} (+ {diferenca_aquisicao:.2f})"))
 
-    desconto_texto = "0%"  # Inicialização padrão
+    desconto_texto = "0%" 
 
     if tipo == 'Serviço':
         preco_anterior = preco_aquisicao
-        preco_aquisicao *= 2  # Aplicar taxa de serviço
+        preco_aquisicao *= 2  #taxa de serviço
         diferenca_servico = preco_aquisicao - preco_anterior
-        detalhes_precos.append(('Taxa de Serviço', f"{preco_aquisicao:.2f} (+ {diferenca_servico:.2f})"))
+        detalhes_precos.append(('Taxa de Serviço (+100%)', f"{preco_aquisicao:.2f} (+ {diferenca_servico:.2f})"))
 
         preco_recorrencia = preco_aquisicao
         if recorrencia > 0:
@@ -82,7 +82,7 @@ largura_cm = st.number_input('Largura do quadro (em centímetros):', min_value=0
 altura_cm = st.number_input('Altura do quadro (em centímetros):', min_value=0.0, format="%.2f")
 
 multiplicadores = {1: 1, 2: 2, 3: 3, 4: 4}
-multiplicador = st.selectbox('Multiplicador do preço base:', options=list(multiplicadores.keys()))
+multiplicador = st.selectbox('Multiplicador:', options=list(multiplicadores.keys()))
 
 opcoes_mackup = {1: 1.05, 2: 1.10, 3: 1.15, 4: 1.20}
 mackup = st.selectbox('Mackup do design (1 a 4):', options=list(opcoes_mackup.keys()), format_func=lambda x: f"{x} - {opcoes_mackup[x]*100-100:.0f}%")
