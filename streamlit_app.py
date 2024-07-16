@@ -64,11 +64,14 @@ def calcular_preco(largura_cm, altura_cm, multiplicador, mackup, margem_lucro, q
             desconto_qtd = 0.85 if tipo_usuario == 'Consumidor' else 0.7
             desconto_texto = "15%" if tipo_usuario == 'Consumidor' else "30%"
         
-        preco_total_com_desconto = preco_total * desconto_qtd
-        diferenca_quantidade = preco_total_com_desconto - preco_total
-        detalhes_precos.append(('Desconto de Quantidade', f"{preco_total_com_desconto:.2f} (- {abs(diferenca_quantidade):.2f})"))
-        preco_total = preco_total_com_desconto
-
+        preco_unitario_com_desconto = preco_total * desconto_qtd
+        diferenca_quantidade = preco_unitario_com_desconto - preco_total
+        detalhes_precos.append(('Desconto de Quantidade', f"{preco_unitario_com_desconto:.2f} (- {abs(diferenca_quantidade):.2f})"))
+        preco_total = preco_unitario_com_desconto * quantidade
+        detalhes_precos.append(('Preço Unitário', f"{preco_unitario_com_desconto:.2f}"))
+    else:
+        detalhes_precos.append(('Preço Unitário', f"{preco_total:.2f}"))
+    
     detalhes_precos.append(('Preço Total', f"{preco_total:.2f}"))
 
     return detalhes_precos, desconto_texto
