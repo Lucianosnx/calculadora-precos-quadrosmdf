@@ -12,25 +12,25 @@ def calcular_preco(largura_cm, altura_cm, multiplicador, mackup, margem_lucro, q
 
     preco_multiplicado = custo_materia_prima * multiplicador
     diferenca_multiplicador = preco_multiplicado - custo_materia_prima
-    detalhes_precos.append(('Multiplicador', f"+ {diferenca_multiplicador:.2f}  (R$ {preco_multiplicado:.2f})"))
+    detalhes_precos.append(('Multiplicador', f"{preco_multiplicado:.2f} (+ {diferenca_multiplicador:.2f})"))
 
     preco_mackup = preco_multiplicado * mackup
     diferenca_mackup = preco_mackup - preco_multiplicado
-    detalhes_precos.append(('Mackup', f"+ {diferenca_mackup:.2f}  (R$ {preco_mackup:.2f})"))
+    detalhes_precos.append(('Mackup', f"{preco_mackup:.2f} (+ {diferenca_mackup:.2f})"))
 
     preco_final = preco_mackup * margem_lucro
     diferenca_lucro = preco_final - preco_mackup
-    detalhes_precos.append(('Margem de Lucro', f"+ {diferenca_lucro:.2f}  (R$ {preco_final:.2f})"))
+    detalhes_precos.append(('Margem de Lucro', f"{preco_final:.2f} (+ {diferenca_lucro:.2f})"))
 
     taxa_erro = 1.03
     preco_erro = preco_final * taxa_erro
     diferenca_erro = preco_erro - preco_final
-    detalhes_precos.append(('Taxa de Erro (3%)', f"+ {diferenca_erro:.2f}  (R$ {preco_erro:.2f})"))
+    detalhes_precos.append(('Taxa de Erro (3%)', f"{preco_erro:.2f} (+ {diferenca_erro:.2f})"))
     
     custo_aquisicao = 1.17
     preco_aquisicao = preco_erro * custo_aquisicao
     diferenca_aquisicao = preco_aquisicao - preco_erro
-    detalhes_precos.append(('Custo de Aquisição (17%)', f"+ {diferenca_aquisicao:.2f}  (R$ {preco_aquisicao:.2f})"))
+    detalhes_precos.append(('Custo de Aquisição (17%)', f"{preco_aquisicao:.2f} (+ {diferenca_aquisicao:.2f})"))
 
     desconto_texto = "0%"  # Inicialização padrão
 
@@ -38,25 +38,23 @@ def calcular_preco(largura_cm, altura_cm, multiplicador, mackup, margem_lucro, q
         preco_anterior = preco_aquisicao
         preco_aquisicao *= 2  # Aplicar taxa de serviço
         diferenca_servico = preco_aquisicao - preco_anterior
-        detalhes_precos.append(('Taxa de Serviço', f"+ {diferenca_servico:.2f}  (R$ {preco_aquisicao:.2f})"))
+        detalhes_precos.append(('Taxa de Serviço', f"{preco_aquisicao:.2f} (+ {diferenca_servico:.2f})"))
 
         preco_recorrencia = preco_aquisicao
         if recorrencia > 0:
             desconto_recorrencia = 1 - (recorrencia * 0.05) if tipo_usuario == 'Consumidor' else 1 - (recorrencia * 0.1)
             preco_recorrencia = preco_aquisicao * desconto_recorrencia
             diferenca_recorrencia = preco_recorrencia - preco_aquisicao
-            detalhes_precos.append(('Desconto de Recorrência', f"- {abs(diferenca_recorrencia):.2f}  (R$ {preco_recorrencia:.2f})"))
+            detalhes_precos.append(('Desconto de Recorrência', f"{preco_recorrencia:.2f} (- {abs(diferenca_recorrencia):.2f})"))
         preco_final = preco_recorrencia
 
     else:
         preco_final = preco_aquisicao
 
     preco_total = preco_final
-    if quantidade >= 1:
-        if quantidade > 1 and quantidade < 10:
-            desconto_qtd = 1
-            desconto_texto = "0%"
-        elif quantidade >= 10 and quantidade < 50:
+    desconto_qtd = 1
+    if quantidade > 1:
+        if quantidade >= 10 and quantidade < 50:
             desconto_qtd = 0.95 if tipo_usuario == 'Consumidor' else 0.9
             desconto_texto = "5%" if tipo_usuario == 'Consumidor' else "10%"
         elif quantidade >= 50 and quantidade < 100:
@@ -68,10 +66,12 @@ def calcular_preco(largura_cm, altura_cm, multiplicador, mackup, margem_lucro, q
         
         preco_total_com_desconto = preco_total * desconto_qtd
         diferenca_quantidade = preco_total_com_desconto - preco_total
-        detalhes_precos.append(('Desconto de Quantidade', f"- {abs(diferenca_quantidade):.2f}  (R$ {preco_total_com_desconto:.2f})"))
+        detalhes_precos.append(('Desconto de Quantidade', f"{preco_total_com_desconto:.2f} (- {abs(diferenca_quantidade):.2f})"))
         preco_total = preco_total_com_desconto
 
-    return detalhes_precos, desconto_texto, preco_total
+    detalhes_precos.append(('Preço Total', f"{preco_total:.2f}"))
+
+    return detalhes_precos, desconto_texto
 
 st.title('Calculadora de Preços QuadrosMDF')
 
@@ -113,8 +113,7 @@ if tipo == 'Serviço':
     recorrencia = st.selectbox('Recorrência:', options=list(descontos_recorrencia_display.keys()), format_func=lambda x: f"{x} ({descontos_recorrencia_display[x]})")
 
 if largura_cm and altura_cm:
-    detalhes_precos, desconto_texto, preco_total = calcular_preco(largura_cm, altura_cm, multiplicadores[multiplicador], opcoes_mackup[mackup], opcoes_lucro[margem_lucro], quantidade, recorrencia, tipo, tipo_usuario)
+    detalhes_precos, desconto_texto = calcular_preco(largura_cm, altura_cm, multiplicadores[multiplicador], opcoes_mackup[mackup], opcoes_lucro[margem_lucro], quantidade, recorrencia, tipo, tipo_usuario)
     
     df_precos = pd.DataFrame(detalhes_precos, columns=['Descrição', 'Preço (R$)'])
     st.table(df_precos)
-    st.write(f"Preço Total: R$ {preco_total:.2f}")
