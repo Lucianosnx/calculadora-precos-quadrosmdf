@@ -19,9 +19,17 @@ def calcular_preco(largura_cm, altura_cm, multiplicador, mackup, margem_lucro, q
     preco_final = preco_mackup * margem_lucro
     detalhes_precos.append(('Preço após Margem de Lucro', preco_final))
 
+    taxa_erro = 1.03
+    preco_erro = preco_final * taxa_erro
+    detalhes_precos.append(('Preço após Taxa de Erro (3%)', preco_erro))
+    
+    custo_aquisicao = 1.17
+    preco_aquisicao = preco_erro * custo_aquisicao
+    detalhes_precos.append(('Preço após Custo de Aquisição (17%)', preco_aquisicao))
+
     if tipo == 'Serviço':
-        preco_final *= 2  # Aplicar taxa de serviço
-        detalhes_precos.append(('Preço após Taxa de Serviço', preco_final))
+        preco_aquisicao *= 2  # Aplicar taxa de serviço
+        detalhes_precos.append(('Preço após Taxa de Serviço', preco_aquisicao))
 
         if quantidade == 1:
             desconto_qtd = 1
@@ -39,7 +47,7 @@ def calcular_preco(largura_cm, altura_cm, multiplicador, mackup, margem_lucro, q
             desconto_qtd = 0.85 if tipo_usuario == 'Consumidor' else 0.7
             desconto_texto = "15%" if tipo_usuario == 'Consumidor' else "30%"
         
-        preco_quantidade = preco_final * desconto_qtd
+        preco_quantidade = preco_aquisicao * desconto_qtd
         detalhes_precos.append(('Preço após Desconto de Quantidade', preco_quantidade))
         
         preco_recorrencia = preco_quantidade
@@ -50,19 +58,11 @@ def calcular_preco(largura_cm, altura_cm, multiplicador, mackup, margem_lucro, q
         
         preco_final = preco_recorrencia if recorrencia > 0 else preco_quantidade
     else:
-        preco_final = preco_mackup * margem_lucro
+        preco_final = preco_aquisicao
 
-    taxa_erro = 1.03
-    preco_erro = preco_final * taxa_erro
-    detalhes_precos.append(('Preço após Taxa de Erro (3%)', preco_erro))
-    
-    custo_aquisicao = 1.17
-    preco_aquisicao = preco_erro * custo_aquisicao
-    detalhes_precos.append(('Preço após Custo de Aquisição (17%)', preco_aquisicao))
-    
-    preco_total = preco_aquisicao * (quantidade if tipo == 'Serviço' else 1)
+    preco_total = preco_final * (quantidade if tipo == 'Serviço' else 1)
     if quantidade > 1 and tipo == 'Serviço':
-        detalhes_precos.append(('Preço Unitário', preco_aquisicao))
+        detalhes_precos.append(('Preço Unitário', preco_final))
         detalhes_precos.append(('Preço Final Total', preco_total))
     else:
         detalhes_precos.append(('Preço Final', preco_total))
