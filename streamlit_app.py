@@ -79,7 +79,8 @@ def calcular_preco(largura_cm, altura_cm, mackup, margem_lucro, quantidade, reco
     
     preco_total = round(preco_total * multiplicador, 2)
     diferenca_multiplicador = round(preco_total - (preco_total / multiplicador), 2)
-    detalhes_precos.append(('Multiplicador', f"+ {diferenca_multiplicador:.2f}"))
+    if multiplicador > 1:
+        detalhes_precos.append(('Multiplicador', f"+ {diferenca_multiplicador:.2f}"))
 
     detalhes_precos.append(('Preço Total', f"{preco_total:.2f}"))
 
@@ -94,7 +95,7 @@ mackup = st.selectbox('Mackup do design (1 a 4):', [1.05, 1.10, 1.15, 1.20])
 margem_lucro = st.selectbox('Margem de lucro:', [1.05, 1.10, 1.20, 1.30])
 
 quantidade = st.number_input('Quantidade:', min_value=1, format="%d")
-multiplicador = st.number_input('Multiplicador:', min_value=1.0, format="%.2f")
+multiplicador = st.number_input('Multiplicador:', min_value=1, format="%.2f")
 
 tipo = st.selectbox('Tipo:', ('Produto', 'Serviço'))
 
