@@ -60,7 +60,7 @@ def calcular_preco(largura_cm, altura_cm, multiplicador, mackup, margem_lucro, q
 
     preco_final = round(preco_final * multiplicador, 2)
     diferenca_multiplicador = round(preco_final - preco_aquisicao, 2)
-    detalhes_precos.append(('Quantidade', f"+ {diferenca_multiplicador:.2f}"))
+    detalhes_precos.append(('Multiplicador', f"+ {diferenca_multiplicador:.2f}"))
 
     preco_total = preco_final
     desconto_qtd = 1
@@ -91,14 +91,14 @@ st.title('Calculadora de Preços QuadrosMDF')
 largura_cm = st.number_input('Largura do quadro (em centímetros):', min_value=0.0, format="%.2f")
 altura_cm = st.number_input('Altura do quadro (em centímetros):', min_value=0.0, format="%.2f")
 
-multiplicadores = {1: 1, 2: 2, 3: 3, 4: 4}
-multiplicador = st.selectbox('Quantidade:', options=list(multiplicadores.keys()))
-
 opcoes_mackup = {1: 1.05, 2: 1.10, 3: 1.15, 4: 1.20}
 mackup = st.selectbox('Mackup do design (1 a 4):', options=list(opcoes_mackup.keys()), format_func=lambda x: f"{x} - {opcoes_mackup[x]*100-100:.0f}%")
 
 opcoes_lucro = {1: 1.05, 2: 1.10, 3: 1.20, 4: 1.30}
 margem_lucro = st.selectbox('Margem de lucro:', options=list(opcoes_lucro.keys()), format_func=lambda x: f"{x} - {opcoes_lucro[x]*100-100:.0f}%")
+
+multiplicadores = {1: 1, 2: 2, 3: 3, 4: 4, 5: 5}
+multiplicador = st.selectbox('Multiplicador:', options=list(multiplicadores.keys()))
 
 tipo = st.selectbox('Tipo:', ('Produto', 'Serviço'))
 
