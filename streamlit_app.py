@@ -32,24 +32,29 @@ def calcular_preco(largura_cm, altura_cm, multiplicador, mackup, margem_lucro, q
     diferenca_aquisicao = round(preco_aquisicao - preco_erro, 2)
     detalhes_precos.append(('Custo de Aquisição (17%)', f"+ {diferenca_aquisicao:.2f}"))
 
+    taxa_nota_fiscal = 1.04
+    preco_nota_fiscal = round(preco_aquisicao * taxa_nota_fiscal, 2)
+    diferenca_nota_fiscal = round(preco_nota_fiscal - preco_aquisicao, 2)
+    detalhes_precos.append(('Taxa da Nota Fiscal (4%)', f"+ {diferenca_nota_fiscal:.2f}"))
+
     desconto_texto = "0%"
 
     if tipo == 'Serviço':
-        preco_anterior = preco_aquisicao
-        preco_aquisicao = round(preco_aquisicao * 2, 2)  #taxa de serviço
-        diferenca_servico = round(preco_aquisicao - preco_anterior, 2)
+        preco_anterior = preco_nota_fiscal
+        preco_nota_fiscal = round(preco_nota_fiscal * 2, 2)  #taxa de serviço
+        diferenca_servico = round(preco_nota_fiscal - preco_anterior, 2)
         detalhes_precos.append(('Taxa de Serviço (+100%)', f"+ {diferenca_servico:.2f}"))
 
-        preco_recorrencia = preco_aquisicao
+        preco_recorrencia = preco_nota_fiscal
         if recorrencia > 0:
             desconto_recorrencia = 1 - (recorrencia * 0.05) if tipo_usuario == 'Consumidor' else 1 - (recorrencia * 0.1)
-            preco_recorrencia = round(preco_aquisicao * desconto_recorrencia, 2)
-            diferenca_recorrencia = round(preco_recorrencia - preco_aquisicao, 2)
+            preco_recorrencia = round(preco_nota_fiscal * desconto_recorrencia, 2)
+            diferenca_recorrencia = round(preco_recorrencia - preco_nota_fiscal, 2)
             detalhes_precos.append(('Desconto de Recorrência', f"- {abs(diferenca_recorrencia):.2f}"))
         preco_final = preco_recorrencia
 
     else:
-        preco_final = preco_aquisicao
+        preco_final = preco_nota_fiscal
 
     if tipo == 'Produto' and preco_final < 70:
         diferenca_ajuste = 7
