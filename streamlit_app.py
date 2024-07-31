@@ -10,8 +10,12 @@ def calcular_preco(largura_cm, altura_cm, multiplicador, mackup, margem_lucro, q
 
     detalhes_precos.append(('Custo Matéria Prima', f"{custo_materia_prima:.2f}"))
 
-    preco_mackup = round(custo_materia_prima * mackup, 2)
-    diferenca_mackup = round(preco_mackup - custo_materia_prima, 2)
+    preco_multiplicado = round(custo_materia_prima * multiplicador, 2)
+    diferenca_multiplicador = round(preco_multiplicado - custo_materia_prima, 2)
+    detalhes_precos.append(('Multiplicador', f"+ {diferenca_multiplicador:.2f}"))
+
+    preco_mackup = round(preco_multiplicado * mackup, 2)
+    diferenca_mackup = round(preco_mackup - preco_multiplicado, 2)
     detalhes_precos.append(('Mackup', f"+ {diferenca_mackup:.2f}"))
 
     preco_final = round(preco_mackup * margem_lucro, 2)
@@ -37,10 +41,9 @@ def calcular_preco(largura_cm, altura_cm, multiplicador, mackup, margem_lucro, q
         detalhes_precos.append(('Taxa de Serviço (+100%)', f"+ {diferenca_servico:.2f}"))
 
         preco_anterior = preco_aquisicao
-        taxa_nota_fiscal = 1.04
-        preco_aquisicao = round(preco_aquisicao * taxa_nota_fiscal, 2)  #taxa de nota fiscal
+        preco_aquisicao = round(preco_aquisicao * 1.04, 2)  #taxa de nota fiscal
         diferenca_nota_fiscal = round(preco_aquisicao - preco_anterior, 2)
-        detalhes_precos.append(('Taxa da Nota Fiscal (4%)', f"+ {diferenca_nota_fiscal:.2f}"))
+        detalhes_precos.append(('Taxa de Nota Fiscal (4%)', f"+ {diferenca_nota_fiscal:.2f}"))
 
         preco_recorrencia = preco_aquisicao
         if recorrencia > 0:
@@ -57,10 +60,6 @@ def calcular_preco(largura_cm, altura_cm, multiplicador, mackup, margem_lucro, q
         diferenca_ajuste = 7
         preco_final += diferenca_ajuste
         detalhes_precos.append(('Ajuste de Preço (Abaixo de R$70)', f"+ {diferenca_ajuste:.2f}"))
-
-    preco_final = round(preco_final * multiplicador, 2)
-    diferenca_multiplicador = round(preco_final - preco_aquisicao, 2)
-    detalhes_precos.append(('Multiplicador', f"+ {diferenca_multiplicador:.2f}"))
 
     preco_total = preco_final
     desconto_qtd = 1
@@ -91,14 +90,14 @@ st.title('Calculadora de Preços QuadrosMDF')
 largura_cm = st.number_input('Largura do quadro (em centímetros):', min_value=0.0, format="%.2f")
 altura_cm = st.number_input('Altura do quadro (em centímetros):', min_value=0.0, format="%.2f")
 
+multiplicadores = {1: 1, 2: 2, 3: 3, 4: 4}
+multiplicador = st.selectbox('Multiplicador:', options=list(multiplicadores.keys()))
+
 opcoes_mackup = {1: 1.05, 2: 1.10, 3: 1.15, 4: 1.20}
 mackup = st.selectbox('Mackup do design (1 a 4):', options=list(opcoes_mackup.keys()), format_func=lambda x: f"{x} - {opcoes_mackup[x]*100-100:.0f}%")
 
 opcoes_lucro = {1: 1.05, 2: 1.10, 3: 1.20, 4: 1.30}
 margem_lucro = st.selectbox('Margem de lucro:', options=list(opcoes_lucro.keys()), format_func=lambda x: f"{x} - {opcoes_lucro[x]*100-100:.0f}%")
-
-multiplicadores = {1: 1, 2: 2, 3: 3, 4: 4, 5: 5}
-multiplicador = st.selectbox('Multiplicador:', options=list(multiplicadores.keys()))
 
 tipo = st.selectbox('Tipo:', ('Produto', 'Serviço'))
 
