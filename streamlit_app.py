@@ -1,7 +1,7 @@
 import streamlit as st
 import pandas as pd
 
-def calcular_preco(largura_cm, altura_cm, mackup, margem_lucro, quantidade, recorrencia, multiplicador, tipo, tipo_usuario):
+def calcular_preco(largura_cm, altura_cm, multiplicador, mackup, margem_lucro, quantidade, recorrencia, tipo, tipo_usuario):
     area = largura_cm * altura_cm
     area_referencia = 35 * 31
     custo_materia_prima = round((area * 8) / area_referencia, 2)
@@ -10,8 +10,12 @@ def calcular_preco(largura_cm, altura_cm, mackup, margem_lucro, quantidade, reco
 
     detalhes_precos.append(('Custo Matéria Prima', f"{custo_materia_prima:.2f}"))
 
-    preco_mackup = round(custo_materia_prima * mackup, 2)
-    diferenca_mackup = round(preco_mackup - custo_materia_prima, 2)
+    preco_multiplicado = round(custo_materia_prima * multiplicador, 2)
+    diferenca_multiplicador = round(preco_multiplicado - custo_materia_prima, 2)
+    detalhes_precos.append(('Multiplicador', f"+ {diferenca_multiplicador:.2f}"))
+
+    preco_mackup = round(preco_multiplicado * mackup, 2)
+    diferenca_mackup = round(preco_mackup - preco_multiplicado, 2)
     detalhes_precos.append(('Mackup', f"+ {diferenca_mackup:.2f}"))
 
     preco_final = round(preco_mackup * margem_lucro, 2)
@@ -35,11 +39,6 @@ def calcular_preco(largura_cm, altura_cm, mackup, margem_lucro, quantidade, reco
         preco_aquisicao = round(preco_aquisicao * 2, 2)  #taxa de serviço
         diferenca_servico = round(preco_aquisicao - preco_anterior, 2)
         detalhes_precos.append(('Taxa de Serviço (+100%)', f"+ {diferenca_servico:.2f}"))
-
-        preco_anterior = preco_aquisicao
-        preco_aquisicao = round(preco_aquisicao * 1.04, 2)  #taxa de nota fiscal
-        diferenca_nota_fiscal = round(preco_aquisicao - preco_anterior, 2)
-        detalhes_precos.append(('Taxa de Nota Fiscal (4%)', f"+ {diferenca_nota_fiscal:.2f}"))
 
         preco_recorrencia = preco_aquisicao
         if recorrencia > 0:
@@ -77,11 +76,6 @@ def calcular_preco(largura_cm, altura_cm, mackup, margem_lucro, quantidade, reco
         detalhes_precos.append(('Preço Unitário', f"{preco_unitario_com_desconto:.2f}"))
         detalhes_precos.append((f'Quantidade', f"{quantidade}"))
     
-    preco_total = round(preco_total * multiplicador, 2)
-    diferenca_multiplicador = round(preco_total - (preco_total / multiplicador), 2)
-    if multiplicador > 1:
-        detalhes_precos.append(('Multiplicador', f"+ {diferenca_multiplicador:.2f}"))
-
     detalhes_precos.append(('Preço Total', f"{preco_total:.2f}"))
 
     return detalhes_precos, desconto_texto
@@ -91,21 +85,25 @@ st.title('Calculadora de Preços QuadrosMDF')
 largura_cm = st.number_input('Largura do quadro (em centímetros):', min_value=0.0, format="%.2f")
 altura_cm = st.number_input('Altura do quadro (em centímetros):', min_value=0.0, format="%.2f")
 
-mackup = st.selectbox('Mackup do design (1 a 4):', [1.05, 1.10, 1.15, 1.20])
-margem_lucro = st.selectbox('Margem de lucro:', [1.05, 1.10, 1.20, 1.30])
+multiplicadores = {1: 1, 2: 2, 3: 3, 4: 4}
+multiplicador = st.selectbox('Multiplicador:', options=list(multiplicadores.keys()))
 
-multiplicador = st.number_input('Multiplicador:', min_value=1, format="%d")
+opcoes_mackup = {1: 1.05, 2: 1.10, 3: 1.15, 4: 1.20}
+mackup = st.selectbox('Mackup do design (1 a 4):', options=list(opcoes_mackup.keys()), format_func=lambda x: f"{x} - {opcoes_mackup[x]*100-100:.0f}%")
+
+opcoes_lucro = {1: 1.05, 2: 1.10, 3: 1.20, 4: 1.30}
+margem_lucro = st.selectbox('Margem de lucro:', options=list(opcoes_lucro.keys()), format_func=lambda x: f"{x} - {opcoes_lucro[x]*100-100:.0f}%")
 
 tipo = st.selectbox('Tipo:', ('Produto', 'Serviço'))
 
 tipo_usuario = 'Empresa'
+quantidade = 1
 recorrencia = 0
 
 if tipo == 'Serviço':
     tipo_usuario = st.radio('Tipo de usuário:', ('Consumidor', 'Empresa'))
-
+    
     quantidade = st.number_input('Quantidade:', min_value=1, format="%d")
-
     
     if quantidade >= 1 and quantidade < 10:
         desconto_texto = "0%"
@@ -122,7 +120,7 @@ if tipo == 'Serviço':
     recorrencia = st.selectbox('Recorrência:', options=list(descontos_recorrencia_display.keys()), format_func=lambda x: f"{x} ({descontos_recorrencia_display[x]})")
 
 if largura_cm and altura_cm:
-    detalhes_precos, desconto_texto = calcular_preco(largura_cm, altura_cm, mackup, margem_lucro, quantidade, recorrencia, multiplicador, tipo, tipo_usuario)
+    detalhes_precos, desconto_texto = calcular_preco(largura_cm, altura_cm, multiplicadores[multiplicador], opcoes_mackup[mackup], opcoes_lucro[margem_lucro], quantidade, recorrencia, tipo, tipo_usuario)
     
     df_precos = pd.DataFrame(detalhes_precos, columns=['Descrição', 'Preço (R$)'])
     st.table(df_precos)
