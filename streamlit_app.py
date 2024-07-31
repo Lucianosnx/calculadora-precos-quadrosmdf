@@ -59,7 +59,8 @@ def calcular_preco(largura_cm, altura_cm, multiplicador, mackup, margem_lucro, q
 
     preco_total = round(preco_final * multiplicador, 2)
     diferenca_multiplicador = round(preco_total - preco_final, 2)
-    detalhes_precos.append(('Multiplicador', f"+ {diferenca_multiplicador:.2f}"))
+    if multiplicador > 1:
+        detalhes_precos.append(('Multiplicador', f"+ {diferenca_multiplicador:.2f}"))
 
     desconto_qtd = 1
     if quantidade > 1:
