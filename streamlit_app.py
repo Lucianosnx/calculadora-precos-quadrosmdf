@@ -28,7 +28,6 @@ def calcular_preco(largura_cm, altura_cm, multiplicador, mackup, margem_lucro, q
     diferenca_aquisicao = round(preco_aquisicao - preco_erro, 2)
     detalhes_precos.append(('Custo de Aquisição (17%)', f"+ {diferenca_aquisicao:.2f}"))
 
-    # Adicionando a taxa da nota fiscal de 4%
     taxa_nota_fiscal = 1.04
     preco_nota_fiscal = round(preco_aquisicao * taxa_nota_fiscal, 2)
     diferenca_nota_fiscal = round(preco_nota_fiscal - preco_aquisicao, 2)
