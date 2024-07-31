@@ -94,8 +94,7 @@ altura_cm = st.number_input('Altura do quadro (em centímetros):', min_value=0.0
 mackup = st.selectbox('Mackup do design (1 a 4):', [1.05, 1.10, 1.15, 1.20])
 margem_lucro = st.selectbox('Margem de lucro:', [1.05, 1.10, 1.20, 1.30])
 
-quantidade = st.number_input('Quantidade:', min_value=1, format="%d")
-multiplicador = st.number_input('Multiplicador:', min_value=1, format="%.2f")
+multiplicador = st.number_input('Multiplicador:', min_value=1, format="%d")
 
 tipo = st.selectbox('Tipo:', ('Produto', 'Serviço'))
 
@@ -104,6 +103,9 @@ recorrencia = 0
 
 if tipo == 'Serviço':
     tipo_usuario = st.radio('Tipo de usuário:', ('Consumidor', 'Empresa'))
+
+    quantidade = st.number_input('Quantidade:', min_value=1, format="%d")
+
     
     if quantidade >= 1 and quantidade < 10:
         desconto_texto = "0%"
