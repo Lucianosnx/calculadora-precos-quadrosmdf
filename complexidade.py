@@ -1,6 +1,6 @@
 from svgpathtools import svg2paths
 
-def calculate_cut_time_and_complexity(svg_file_path):
+def calculate_cut_time_and_complexity(svg_file_path, altura, largura):
     # Carregar os caminhos do arquivo SVG
     paths, attributes = svg2paths(svg_file_path)
     
@@ -12,6 +12,12 @@ def calculate_cut_time_and_complexity(svg_file_path):
     
     # Calcular o tempo de corte em segundos e converter para minutos
     cut_time_minutes = (total_length / laser_speed) / 60
+    
+    # Ajustar o tempo de corte com base na altura e largura do quadro
+    area = altura * largura
+    area_referencia = 35 * 31
+    ajuste_area = area / area_referencia
+    cut_time_minutes *= ajuste_area
     
     # Calcular a complexidade com base no tempo de corte
     if cut_time_minutes < 10:
