@@ -69,7 +69,7 @@ def calcular_preco(largura_cm, altura_cm, multiplicador, mackup, margem_lucro, q
         if quantidade >= 10 and quantidade < 50:
             desconto_qtd = 0.95 if tipo_usuario == 'Consumidor' else 0.9
             desconto_texto = "5%" if tipo_usuario == 'Consumidor' else "10%"
-        elif quantidade >= 50 e quantidade < 100:
+        elif quantidade >= 50 and quantidade < 100:
             desconto_qtd = 0.9 if tipo_usuario == 'Consumidor' else 0.8
             desconto_texto = "10%" if tipo_usuario == 'Consumidor' else "20%"
         elif quantidade >= 100:
