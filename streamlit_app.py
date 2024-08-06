@@ -94,13 +94,16 @@ altura_cm = st.number_input('Altura do quadro (em centímetros):', min_value=0.0
 multiplicador = st.number_input('Multiplicador:', min_value=1, format="%d")
 
 uploaded_file = st.file_uploader("Upload SVG", type="svg")
+complexity = 1  
+
 if uploaded_file is not None:
     with open("uploaded_file.svg", "wb") as f:
         f.write(uploaded_file.getbuffer())
     complexity = calculate_svg_complexity("uploaded_file.svg", str(largura_cm*10), str(altura_cm*10))
     st.write(f"Taxa de Complexidade: {complexity:.2f}%")
+
 else:
-    complexity = 1  # Valor padrão caso nenhum arquivo seja enviado
+    st.write(f"Taxa de Complexidade: {complexity:.2f}%")
 
 opcoes_lucro = {1: 1.05, 2: 1.10, 3: 1.20, 4: 1.30}
 margem_lucro = st.selectbox('Margem de lucro:', options=list(opcoes_lucro.keys()), format_func=lambda x: f"{x} - {opcoes_lucro[x]*100-100:.0f}%")
