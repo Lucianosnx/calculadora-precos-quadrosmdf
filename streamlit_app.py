@@ -102,9 +102,6 @@ if uploaded_file is not None:
     complexity = calculate_svg_complexity("uploaded_file.svg", str(largura_cm*10), str(altura_cm*10))
     st.write(f"Taxa de Complexidade: {complexity:.2f}%")
 
-else:
-    st.write(f"Taxa de Complexidade: {complexity:.2f}%")
-
 opcoes_lucro = {1: 1.05, 2: 1.10, 3: 1.20, 4: 1.30}
 margem_lucro = st.selectbox('Margem de lucro:', options=list(opcoes_lucro.keys()), format_func=lambda x: f"{x} - {opcoes_lucro[x]*100-100:.0f}%")
 
