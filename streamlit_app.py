@@ -97,7 +97,9 @@ uploaded_file = st.file_uploader("Upload SVG", type="svg")
 if uploaded_file is not None:
     with open("uploaded_file.svg", "wb") as f:
         f.write(uploaded_file.getbuffer())
-    complexidade = calcular_complexidade("uploaded_file.svg")
+    complexidade, tempo_corte = calcular_complexidade("uploaded_file.svg")
+    st.write(f"Tempo de Corte: {tempo_corte:.2f} minutos")
+    st.write(f"Taxa de Complexidade: {(complexidade - 1) * 100:.2f}%")
 else:
     complexidade = 1  # Valor padrão caso nenhum arquivo seja enviado
 
