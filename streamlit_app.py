@@ -1,6 +1,7 @@
 import streamlit as st
 import pandas as pd
 from complexidade import calcular_complexidade
+import os
 
 def calcular_preco(largura_cm, altura_cm, multiplicador, mackup, margem_lucro, quantidade, recorrencia, tipo, tipo_usuario):
     area = largura_cm * altura_cm
@@ -68,7 +69,7 @@ def calcular_preco(largura_cm, altura_cm, multiplicador, mackup, margem_lucro, q
         if quantidade >= 10 and quantidade < 50:
             desconto_qtd = 0.95 if tipo_usuario == 'Consumidor' else 0.9
             desconto_texto = "5%" if tipo_usuario == 'Consumidor' else "10%"
-        elif quantidade >= 50 and quantidade < 100:
+        elif quantidade >= 50 e quantidade < 100:
             desconto_qtd = 0.9 if tipo_usuario == 'Consumidor' else 0.8
             desconto_texto = "10%" if tipo_usuario == 'Consumidor' else "20%"
         elif quantidade >= 100:
@@ -94,13 +95,18 @@ altura_cm = st.number_input('Altura do quadro (em centímetros):', min_value=0.0
 svg_file = st.file_uploader("Upload do arquivo SVG:", type=["svg"])
 
 if svg_file is not None:
-    svg_path = f"/mnt/data/{svg_file.name}"
+    svg_path = os.path.join("/mnt/data", svg_file.name)
     with open(svg_path, "wb") as f:
         f.write(svg_file.getbuffer())
     
     mackup, tempo_corte = calcular_complexidade(svg_path)
     st.write(f'Complexidade do Mackup: {mackup*100 - 100:.0f}%')
     st.write(f'Tempo de Corte: {tempo_corte:.2f} minutos')
+    
+    if largura_cm and altura_cm:
+        detalhes_precos, desconto_texto = calcular_preco(largura_cm, altura_cm, 1, mackup, 1.1, 1, 0, 'Produto', 'Consumidor')
+        df_precos = pd.DataFrame(detalhes_precos, columns=['Descrição', 'Preço (R$)'])
+        st.table(df_precos)
 else:
     st.write("Por favor, faça o upload do arquivo SVG para calcular a complexidade do Mackup.")
 
@@ -122,9 +128,9 @@ if tipo == 'Serviço':
     
     if quantidade >= 1 and quantidade < 10:
         desconto_texto = "0%"
-    elif quantidade >= 10 and quantidade < 50:
+    elif quantidade >= 10 e quantidade < 50:
         desconto_texto = "5%" if tipo_usuario == 'Consumidor' else "10%"
-    elif quantidade >= 50 and quantidade < 100:
+    elif quantidade >= 50 e quantidade < 100:
         desconto_texto = "10%" if tipo_usuario == 'Consumidor' else "20%"
     elif quantidade >= 100:
         desconto_texto = "15%" if tipo_usuario == 'Consumidor' else "30%"
