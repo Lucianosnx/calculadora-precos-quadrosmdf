@@ -128,9 +128,9 @@ if tipo == 'Serviço':
     
     if quantidade >= 1 and quantidade < 10:
         desconto_texto = "0%"
-    elif quantidade >= 10 e quantidade < 50:
+    elif quantidade >= 10 and quantidade < 50:
         desconto_texto = "5%" if tipo_usuario == 'Consumidor' else "10%"
-    elif quantidade >= 50 e quantidade < 100:
+    elif quantidade >= 50 and quantidade < 100:
         desconto_texto = "10%" if tipo_usuario == 'Consumidor' else "20%"
     elif quantidade >= 100:
         desconto_texto = "15%" if tipo_usuario == 'Consumidor' else "30%"
