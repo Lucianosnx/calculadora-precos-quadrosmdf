@@ -29,4 +29,4 @@ def calculate_cut_time_and_complexity(svg_file_path, altura, largura):
     else:
         complexity = 1.20
     
-    return cut_time_minutes, complexity
+    return cut_time_minutes/2, complexity
