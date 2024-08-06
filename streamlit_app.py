@@ -95,8 +95,8 @@ altura_cm = st.number_input('Altura do quadro (em centímetros):', min_value=0.0
 uploaded_file = st.file_uploader("Upload do arquivo SVG para calcular a complexidade:", type=["svg"])
 
 if uploaded_file is not None:
-    svg_path = '/mnt/data/Pasted-20240805-102815 (1).svg'
-    cut_time, complexity = calculate_cut_time_and_complexity(svg_path)
+    svg_content = uploaded_file.read().decode('utf-8')
+    cut_time, complexity = calculate_cut_time_and_complexity(svg_content)
     st.write(f"Tempo de corte: {int(cut_time)} minutos")
     st.write(f"Complexidade do corte: {complexity * 100:.2f}%")
     taxa_complexidade = complexity

@@ -1,9 +1,10 @@
 # complexidade.py
-from svgpathtools import svg2paths
+from svgpathtools import parse_path, svg2paths2
+import io
 
-def calculate_cut_time_and_complexity(svg_file, laser_speed=7.0):
-    # Carregar os caminhos do conteúdo SVG
-    paths, attributes = svg2paths(svg_file)
+def calculate_cut_time_and_complexity(svg_content, laser_speed=7.0):
+    # Carregar os caminhos do conteúdo SVG a partir de uma string
+    paths, attributes, svg_attr = svg2paths2(io.StringIO(svg_content))
     
     # Calcular o comprimento total dos caminhos
     total_length = sum(path.length() for path in paths)
