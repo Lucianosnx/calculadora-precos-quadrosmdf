@@ -11,7 +11,7 @@ def calcular_preco(largura_cm, altura_cm, multiplicador, complexidade, margem_lu
 
     detalhes_precos.append(('Custo Matéria Prima', f"{custo_materia_prima:.2f}"))
 
-    preco_mackup = round(custo_materia_prima * (1 + complexity / 100), 2)
+    preco_mackup = round(custo_materia_prima * complexidade, 2)
     diferenca_mackup = round(preco_mackup - custo_materia_prima, 2)
     detalhes_precos.append(('Complexidade', f"+ {diferenca_mackup:.2f}"))
 
@@ -92,8 +92,6 @@ largura_cm = st.number_input('Largura do quadro (em centímetros):', min_value=0
 altura_cm = st.number_input('Altura do quadro (em centímetros):', min_value=0.0, format="%.2f")
 
 multiplicador = st.number_input('Multiplicador:', min_value=1, format="%d")
-
-velocidade_laser = st.number_input('Velocidade do laser (unidades de comprimento por segundo):', min_value=0.1, value=19.12, format="%.2f")
 
 uploaded_file = st.file_uploader("Upload SVG", type="svg")
 if uploaded_file is not None:
