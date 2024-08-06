@@ -5,7 +5,7 @@ def calculate_cut_time_and_complexity(svg_file_path):
     paths, attributes = svg2paths(svg_file_path)
     
     # Definir a velocidade do laser em unidades de comprimento por segundo
-    laser_speed = 19.12
+    laser_speed = 8
     
     # Calcular o comprimento total dos caminhos
     total_length = sum(path.length() for path in paths)
