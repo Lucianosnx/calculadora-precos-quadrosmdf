@@ -11,7 +11,7 @@ def calcular_preco(largura_cm, altura_cm, multiplicador, complexidade, margem_lu
 
     detalhes_precos.append(('Custo Matéria Prima', f"{custo_materia_prima:.2f}"))
 
-    preco_mackup = round(custo_materia_prima * (1 + complexity / 100), 2)
+    preco_mackup = round(custo_materia_prima * complexidade, 2)
     diferenca_mackup = round(preco_mackup - custo_materia_prima, 2)
     detalhes_precos.append(('Complexidade', f"+ {diferenca_mackup:.2f}"))
 
@@ -93,15 +93,13 @@ altura_cm = st.number_input('Altura do quadro (em centímetros):', min_value=0.0
 
 multiplicador = st.number_input('Multiplicador:', min_value=1, format="%d")
 
-velocidade_laser = st.number_input('Velocidade do laser (unidades de comprimento por segundo):', min_value=0.1, value=19.12, format="%.2f")
-
 uploaded_file = st.file_uploader("Upload SVG", type="svg")
 if uploaded_file is not None:
     with open("uploaded_file.svg", "wb") as f:
         f.write(uploaded_file.getbuffer())
-    cut_time_minutes, complexity = calculate_cut_time_and_complexity("uploaded_file.svg", velocidade_laser)
+    cut_time_minutes, complexity = calculate_cut_time_and_complexity("uploaded_file.svg")
     st.write(f"Tempo de Corte: {cut_time_minutes:.2f} minutos")
-    st.write(f"Taxa de Complexidade: {complexity:.2f}%")
+    st.write(f"Taxa de Complexidade: {(complexity - 1) * 100:.2f}%")
 else:
     complexity = 1  # Valor padrão caso nenhum arquivo seja enviado
 
