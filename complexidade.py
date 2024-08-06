@@ -1,38 +1,12 @@
-import xml.etree.ElementTree as ET
-import math
-
-def parse_svg_path(path_data):
-    # Implement a simple SVG path parser for demonstration purposes
-    length = 0
-    commands = path_data.split()
-    current_pos = (0, 0)
-    start_pos = (0, 0)
-    
-    for command in commands:
-        if command == 'M':
-            start_pos = (float(commands.pop(0)), float(commands.pop(0)))
-            current_pos = start_pos
-        elif command == 'L':
-            next_pos = (float(commands.pop(0)), float(commands.pop(0)))
-            length += math.dist(current_pos, next_pos)
-            current_pos = next_pos
-        elif command == 'Z':
-            length += math.dist(current_pos, start_pos)
-            current_pos = start_pos
-    
-    return length
+import svgpathtools
 
 def calcular_complexidade(svg_file_path):
-    tree = ET.parse(svg_file_path)
-    root = tree.getroot()
+    # Carregar o arquivo SVG usando svgpathtools
+    paths, _ = svgpathtools.svg2paths(svg_file_path)
     
     velocidade_laser = 7  # Velocidade do laser em unidades de comprimento por minuto
     
-    comprimento_total = 0
-    for element in root.iter('{http://www.w3.org/2000/svg}path'):
-        d = element.attrib.get('d')
-        if d:
-            comprimento_total += parse_svg_path(d)
+    comprimento_total = sum(path.length() for path in paths)
     
     # Calibrar o tempo de corte com base no exemplo fornecido
     tempo_corte_real = 21  # minutos para o SVG fornecido
