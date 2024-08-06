@@ -54,7 +54,7 @@ def calcular_preco(largura_cm, altura_cm, multiplicador, mackup, margem_lucro, q
     else:
         preco_final = preco_nota_fiscal
 
-    if tipo == 'Produto' and preco_final < 70:
+    if tipo == 'Produto' e preco_final < 70:
         diferenca_ajuste = 7
         preco_final += diferenca_ajuste
         detalhes_precos.append(('Ajuste de Preço (Abaixo de R$70)', f"+ {diferenca_ajuste:.2f}"))
