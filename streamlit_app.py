@@ -1,6 +1,5 @@
 import streamlit as st
 import pandas as pd
-from complexibilidade import calcular_complexidade
 
 def calcular_preco(largura_cm, altura_cm, multiplicador, mackup, margem_lucro, quantidade, recorrencia, tipo, tipo_usuario):
     area = largura_cm * altura_cm
@@ -38,7 +37,7 @@ def calcular_preco(largura_cm, altura_cm, multiplicador, mackup, margem_lucro, q
 
     if tipo == 'Serviço':
         preco_anterior = preco_nota_fiscal
-        preco_nota_fiscal = round(preco_nota_fiscal * 2, 2)  # taxa de serviço
+        preco_nota_fiscal = round(preco_nota_fiscal * 2, 2)  #taxa de serviço
         diferenca_servico = round(preco_nota_fiscal - preco_anterior, 2)
         detalhes_precos.append(('Taxa de Serviço (+100%)', f"+ {diferenca_servico:.2f}"))
 
@@ -91,20 +90,8 @@ st.title('Calculadora de Preços QuadrosMDF')
 largura_cm = st.number_input('Largura do quadro (em centímetros):', min_value=0.0, format="%.2f")
 altura_cm = st.number_input('Altura do quadro (em centímetros):', min_value=0.0, format="%.2f")
 
-svg_file = st.file_uploader("Upload do arquivo SVG:", type=["svg"])
-
-if svg_file is not None:
-    svg_content = svg_file.read().decode('utf-8')
-    mackup, tempo_corte = calcular_complexidade(svg_content)
-    st.write(f'Complexidade do Mackup: {mackup*100 - 100:.0f}%')
-    st.write(f'Tempo de Corte: {tempo_corte:.2f} minutos')
-    
-    if largura_cm and altura_cm:
-        detalhes_precos, desconto_texto = calcular_preco(largura_cm, altura_cm, 1, mackup, 1.1, 1, 0, 'Produto', 'Consumidor')
-        df_precos = pd.DataFrame(detalhes_precos, columns=['Descrição', 'Preço (R$)'])
-        st.table(df_precos)
-else:
-    st.write("Por favor, faça o upload do arquivo SVG para calcular a complexidade do Mackup.")
+opcoes_mackup = {1: 1.05, 2: 1.10, 3: 1.15, 4: 1.20}
+mackup = st.selectbox('Mackup do design (1 a 4):', options=list(opcoes_mackup.keys()), format_func=lambda x: f"{x} - {opcoes_mackup[x]*100-100:.0f}%")
 
 opcoes_lucro = {1: 1.05, 2: 1.10, 3: 1.20, 4: 1.30}
 margem_lucro = st.selectbox('Margem de lucro:', options=list(opcoes_lucro.keys()), format_func=lambda x: f"{x} - {opcoes_lucro[x]*100-100:.0f}%")
@@ -136,8 +123,8 @@ if tipo == 'Serviço':
     descontos_recorrencia_display = {i: f"{(i * 5 if tipo_usuario == 'Consumidor' else i * 10)}%" for i in range(6)}
     recorrencia = st.selectbox('Recorrência:', options=list(descontos_recorrencia_display.keys()), format_func=lambda x: f"{x} ({descontos_recorrencia_display[x]})")
 
-if largura_cm and altura_cm and svg_file is not None:
-    detalhes_precos, desconto_texto = calcular_preco(largura_cm, altura_cm, multiplicador, mackup, opcoes_lucro[margem_lucro], quantidade, recorrencia, tipo, tipo_usuario)
+if largura_cm and altura_cm:
+    detalhes_precos, desconto_texto = calcular_preco(largura_cm, altura_cm, multiplicador, opcoes_mackup[mackup], opcoes_lucro[margem_lucro], quantidade, recorrencia, tipo, tipo_usuario)
     
     df_precos = pd.DataFrame(detalhes_precos, columns=['Descrição', 'Preço (R$)'])
     st.table(df_precos)
