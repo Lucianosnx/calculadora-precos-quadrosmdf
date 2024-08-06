@@ -11,7 +11,7 @@ def calcular_preco(largura_cm, altura_cm, multiplicador, complexidade, margem_lu
 
     detalhes_precos.append(('Custo Matéria Prima', f"{custo_materia_prima:.2f}"))
 
-    preco_mackup = round(custo_materia_prima * complexidade, 2)
+    preco_mackup = round(custo_materia_prima * complexidade/100, 2)
     diferenca_mackup = round(preco_mackup - custo_materia_prima, 2)
     detalhes_precos.append(('Complexidade', f"+ {diferenca_mackup:.2f}"))
 
