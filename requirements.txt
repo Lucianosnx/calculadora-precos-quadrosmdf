@@ -1,3 +1,2 @@
 streamlit
 svgpathtools
-svg2paths
