@@ -93,11 +93,13 @@ altura_cm = st.number_input('Altura do quadro (em centímetros):', min_value=0.0
 
 multiplicador = st.number_input('Multiplicador:', min_value=1, format="%d")
 
+velocidade_laser = st.number_input('Velocidade do laser (unidades de comprimento por minuto):', min_value=1.0, value=7.0, format="%.2f")
+
 uploaded_file = st.file_uploader("Upload SVG", type="svg")
 if uploaded_file is not None:
     with open("uploaded_file.svg", "wb") as f:
         f.write(uploaded_file.getbuffer())
-    complexidade, tempo_corte = calcular_complexidade("uploaded_file.svg")
+    complexidade, tempo_corte = calcular_complexidade("uploaded_file.svg", velocidade_laser)
     st.write(f"Tempo de Corte: {tempo_corte:.2f} minutos")
     st.write(f"Taxa de Complexidade: {(complexidade - 1) * 100:.2f}%")
 else:

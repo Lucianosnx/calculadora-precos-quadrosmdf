@@ -1,21 +1,16 @@
 import svgpathtools
 
-def calcular_complexidade(svg_file_path):
+def calcular_complexidade(svg_file_path, velocidade_laser):
     # Carregar o arquivo SVG usando svgpathtools
     paths, _ = svgpathtools.svg2paths(svg_file_path)
     
-    velocidade_laser = 7  # Velocidade do laser em unidades de comprimento por minuto
-    
+    # Calcular o comprimento total dos caminhos
     comprimento_total = sum(path.length() for path in paths)
     
-    # Calibrar o tempo de corte com base no exemplo fornecido
-    tempo_corte_real = 21  # minutos para o SVG fornecido
-    comprimento_real = comprimento_total  # comprimento total do SVG fornecido
-    fator_calibracao = tempo_corte_real / comprimento_real
+    # Calcular o tempo de corte baseado na velocidade do laser
+    tempo_corte = comprimento_total / velocidade_laser
     
-    # Ajustar o comprimento total com base no fator de calibração
-    tempo_corte = comprimento_total * fator_calibracao
-    
+    # Definir a complexidade com base no tempo de corte
     if tempo_corte < 10:
         complexidade = 1.05
     elif tempo_corte < 20:
