@@ -1,6 +1,6 @@
 import streamlit as st
 import pandas as pd
-from complexidade import calculate_cut_time_and_complexity
+from complexidade import calculate_svg_complexity
 
 def calcular_preco(largura_cm, altura_cm, multiplicador, complexidade, margem_lucro, quantidade, recorrencia, tipo, tipo_usuario):
     area = largura_cm * altura_cm
