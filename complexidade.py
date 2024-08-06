@@ -18,7 +18,7 @@ def calculate_cut_time_and_complexity(svg_file_path, altura, largura):
     area_referencia = 35 * 31
     ajuste_area = area / area_referencia
     cut_time_minutes *= ajuste_area
-    cut_time_minutes = cut_time_minutes/2
+    #cut_time_minutes = cut_time_minutes/2
     
     # Calcular a complexidade com base no tempo de corte
     if cut_time_minutes < 10:
