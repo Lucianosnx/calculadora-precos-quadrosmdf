@@ -2,6 +2,9 @@
 from svgpathtools import svg2paths2
 import io
 
+# Defina o comprimento total do caminho do SVG de referência que levou 21 minutos para ser cortado
+LENGTH_REFERENCE_SVG = 21  # Este valor deve ser o comprimento total do caminho do SVG de referência em unidades apropriadas
+
 def calculate_cut_time_and_complexity(svg_content, laser_speed=7.0):
     # Carregar os caminhos do conteúdo SVG a partir de uma string
     paths, attributes, svg_attributes = svg2paths2(io.StringIO(svg_content))
@@ -10,8 +13,8 @@ def calculate_cut_time_and_complexity(svg_content, laser_speed=7.0):
     total_length = sum(path.length(error=1e-2) for path in paths)
     
     # Calcular o tempo de corte
-    cut_time_seconds = total_length / laser_speed
-    cut_time_minutes = cut_time_seconds / 60  # Convertendo para minutos
+    # Assumindo que o SVG de referência levou 21 minutos para ser cortado
+    cut_time_minutes = (total_length / LENGTH_REFERENCE_SVG) * 21
     
     # Calcular a complexidade com base no tempo de corte
     if cut_time_minutes < 10:
