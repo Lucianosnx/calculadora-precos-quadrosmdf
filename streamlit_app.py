@@ -1,7 +1,8 @@
 import streamlit as st
 import pandas as pd
+from complexidade import calcular_complexidade
 
-def calcular_preco(largura_cm, altura_cm, multiplicador, mackup, margem_lucro, quantidade, recorrencia, tipo, tipo_usuario):
+def calcular_preco(largura_cm, altura_cm, multiplicador, complexidade, margem_lucro, quantidade, recorrencia, tipo, tipo_usuario):
     area = largura_cm * altura_cm
     area_referencia = 35 * 31
     custo_materia_prima = round((area * 8) / area_referencia, 2)
@@ -10,9 +11,9 @@ def calcular_preco(largura_cm, altura_cm, multiplicador, mackup, margem_lucro, q
 
     detalhes_precos.append(('Custo Matéria Prima', f"{custo_materia_prima:.2f}"))
 
-    preco_mackup = round(custo_materia_prima * mackup, 2)
+    preco_mackup = round(custo_materia_prima * complexidade, 2)
     diferenca_mackup = round(preco_mackup - custo_materia_prima, 2)
-    detalhes_precos.append(('Mackup', f"+ {diferenca_mackup:.2f}"))
+    detalhes_precos.append(('Complexidade', f"+ {diferenca_mackup:.2f}"))
 
     preco_final = round(preco_mackup * margem_lucro, 2)
     diferenca_lucro = round(preco_final - preco_mackup, 2)
@@ -28,6 +29,7 @@ def calcular_preco(largura_cm, altura_cm, multiplicador, mackup, margem_lucro, q
     diferenca_aquisicao = round(preco_aquisicao - preco_erro, 2)
     detalhes_precos.append(('Custo de Aquisição (17%)', f"+ {diferenca_aquisicao:.2f}"))
 
+    # Adicionando a taxa da nota fiscal de 4%
     taxa_nota_fiscal = 1.04
     preco_nota_fiscal = round(preco_aquisicao * taxa_nota_fiscal, 2)
     diferenca_nota_fiscal = round(preco_nota_fiscal - preco_aquisicao, 2)
@@ -59,8 +61,7 @@ def calcular_preco(largura_cm, altura_cm, multiplicador, mackup, margem_lucro, q
 
     preco_total = round(preco_final * multiplicador, 2)
     diferenca_multiplicador = round(preco_total - preco_final, 2)
-    if multiplicador > 1:
-        detalhes_precos.append(('Multiplicador', f"+ {diferenca_multiplicador:.2f}"))
+    detalhes_precos.append(('Multiplicador', f"+ {diferenca_multiplicador:.2f}"))
 
     desconto_qtd = 1
     if quantidade > 1:
@@ -90,13 +91,18 @@ st.title('Calculadora de Preços QuadrosMDF')
 largura_cm = st.number_input('Largura do quadro (em centímetros):', min_value=0.0, format="%.2f")
 altura_cm = st.number_input('Altura do quadro (em centímetros):', min_value=0.0, format="%.2f")
 
-opcoes_mackup = {1: 1.05, 2: 1.10, 3: 1.15, 4: 1.20}
-mackup = st.selectbox('Mackup do design (1 a 4):', options=list(opcoes_mackup.keys()), format_func=lambda x: f"{x} - {opcoes_mackup[x]*100-100:.0f}%")
+multiplicador = st.number_input('Multiplicador:', min_value=1, format="%d")
+
+uploaded_file = st.file_uploader("Upload SVG", type="svg")
+if uploaded_file is not None:
+    with open("uploaded_file.svg", "wb") as f:
+        f.write(uploaded_file.getbuffer())
+    complexidade = calcular_complexidade("uploaded_file.svg")
+else:
+    complexidade = 1  # Valor padrão caso nenhum arquivo seja enviado
 
 opcoes_lucro = {1: 1.05, 2: 1.10, 3: 1.20, 4: 1.30}
 margem_lucro = st.selectbox('Margem de lucro:', options=list(opcoes_lucro.keys()), format_func=lambda x: f"{x} - {opcoes_lucro[x]*100-100:.0f}%")
-
-multiplicador = st.number_input('Multiplicador:', min_value=1, format="%d")
 
 tipo = st.selectbox('Tipo:', ('Produto', 'Serviço'))
 
@@ -124,7 +130,7 @@ if tipo == 'Serviço':
     recorrencia = st.selectbox('Recorrência:', options=list(descontos_recorrencia_display.keys()), format_func=lambda x: f"{x} ({descontos_recorrencia_display[x]})")
 
 if largura_cm and altura_cm:
-    detalhes_precos, desconto_texto = calcular_preco(largura_cm, altura_cm, multiplicador, opcoes_mackup[mackup], opcoes_lucro[margem_lucro], quantidade, recorrencia, tipo, tipo_usuario)
+    detalhes_precos, desconto_texto = calcular_preco(largura_cm, altura_cm, multiplicador, complexidade, opcoes_lucro[margem_lucro], quantidade, recorrencia, tipo, tipo_usuario)
     
     df_precos = pd.DataFrame(detalhes_precos, columns=['Descrição', 'Preço (R$)'])
     st.table(df_precos)
