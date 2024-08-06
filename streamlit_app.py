@@ -98,8 +98,11 @@ if uploaded_file is not None:
     with open("uploaded_file.svg", "wb") as f:
         f.write(uploaded_file.getbuffer())
     cut_time_minutes, complexity = calculate_cut_time_and_complexity("uploaded_file.svg", altura_cm, largura_cm)
-    st.write(f"Tempo de Corte: {cut_time_minutes:.2f} minutos")
-    st.write(f"Taxa de Complexidade: {(complexity - 1) * 100:.2f}%")
+    dados_complexidade = pd.DataFrame([
+        {"Descrição": "Tempo de Corte", "Valor": f"{cut_time_minutes:.2f} minutos"},
+        {"Descrição": "Taxa de Complexidade", "Valor": f"{(complexity - 1) * 100:.2f}%"}
+    ])
+    st.table(dados_complexidade)
 else:
     complexity = 1  # Valor padrão caso nenhum arquivo seja enviado
 
