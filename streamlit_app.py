@@ -1,6 +1,6 @@
 import streamlit as st
 import pandas as pd
-from complexidade import calcular_complexidade
+from complexidade import calculate_cut_time_and_complexity
 
 def calcular_preco(largura_cm, altura_cm, multiplicador, complexidade, margem_lucro, quantidade, recorrencia, tipo, tipo_usuario):
     area = largura_cm * altura_cm
@@ -11,7 +11,7 @@ def calcular_preco(largura_cm, altura_cm, multiplicador, complexidade, margem_lu
 
     detalhes_precos.append(('Custo Matéria Prima', f"{custo_materia_prima:.2f}"))
 
-    preco_mackup = round(custo_materia_prima * complexidade, 2)
+    preco_mackup = round(custo_materia_prima * (1 + complexity / 100), 2)
     diferenca_mackup = round(preco_mackup - custo_materia_prima, 2)
     detalhes_precos.append(('Complexidade', f"+ {diferenca_mackup:.2f}"))
 
@@ -93,17 +93,17 @@ altura_cm = st.number_input('Altura do quadro (em centímetros):', min_value=0.0
 
 multiplicador = st.number_input('Multiplicador:', min_value=1, format="%d")
 
-velocidade_laser = st.number_input('Velocidade do laser (unidades de comprimento por minuto):', min_value=1.0, value=7.0, format="%.2f")
+velocidade_laser = st.number_input('Velocidade do laser (unidades de comprimento por segundo):', min_value=0.1, value=19.12, format="%.2f")
 
 uploaded_file = st.file_uploader("Upload SVG", type="svg")
 if uploaded_file is not None:
     with open("uploaded_file.svg", "wb") as f:
         f.write(uploaded_file.getbuffer())
-    complexidade, tempo_corte = calcular_complexidade("uploaded_file.svg", velocidade_laser)
-    st.write(f"Tempo de Corte: {tempo_corte:.2f} minutos")
-    st.write(f"Taxa de Complexidade: {(complexidade - 1) * 100:.2f}%")
+    cut_time_minutes, complexity = calculate_cut_time_and_complexity("uploaded_file.svg", velocidade_laser)
+    st.write(f"Tempo de Corte: {cut_time_minutes:.2f} minutos")
+    st.write(f"Taxa de Complexidade: {complexity:.2f}%")
 else:
-    complexidade = 1  # Valor padrão caso nenhum arquivo seja enviado
+    complexity = 1  # Valor padrão caso nenhum arquivo seja enviado
 
 opcoes_lucro = {1: 1.05, 2: 1.10, 3: 1.20, 4: 1.30}
 margem_lucro = st.selectbox('Margem de lucro:', options=list(opcoes_lucro.keys()), format_func=lambda x: f"{x} - {opcoes_lucro[x]*100-100:.0f}%")
@@ -134,7 +134,7 @@ if tipo == 'Serviço':
     recorrencia = st.selectbox('Recorrência:', options=list(descontos_recorrencia_display.keys()), format_func=lambda x: f"{x} ({descontos_recorrencia_display[x]})")
 
 if largura_cm and altura_cm:
-    detalhes_precos, desconto_texto = calcular_preco(largura_cm, altura_cm, multiplicador, complexidade, opcoes_lucro[margem_lucro], quantidade, recorrencia, tipo, tipo_usuario)
+    detalhes_precos, desconto_texto = calcular_preco(largura_cm, altura_cm, multiplicador, complexity, opcoes_lucro[margem_lucro], quantidade, recorrencia, tipo, tipo_usuario)
     
     df_precos = pd.DataFrame(detalhes_precos, columns=['Descrição', 'Preço (R$)'])
     st.table(df_precos)
