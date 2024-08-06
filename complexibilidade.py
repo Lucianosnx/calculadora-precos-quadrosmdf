@@ -1,29 +1,18 @@
+from svgpathtools import svg2paths
+
 def calcular_complexidade(svg_file_path):
-    import xml.etree.ElementTree as ET
+    # Lê os caminhos (paths) do arquivo SVG
+    paths, _ = svg2paths(svg_file_path)
     
-    # Lê o arquivo SVG
-    tree = ET.parse(svg_file_path)
-    root = tree.getroot()
-    
-    # Simulação de cálculo de tempo de corte com base em algumas propriedades do SVG
-    # No exemplo, consideramos o número de elementos, comprimento de paths, etc.
+    # Simulação de cálculo de tempo de corte com base no comprimento dos caminhos
     tempo_corte = 0
     
-    # Exemplo de cálculo baseado no número de elementos
-    for elem in root.iter():
-        if elem.tag.endswith('path'):
-            # Supondo que cada path leve um tempo proporcional ao seu comprimento
-            path_length = len(elem.attrib.get('d', ''))
-            tempo_corte += path_length * 0.01  # Ajustar o fator conforme necessário
-        elif elem.tag.endswith('rect'):
-            tempo_corte += 2  # Tempo fixo para retângulos, ajustar conforme necessário
-        elif elem.tag.endswith('circle'):
-            tempo_corte += 3  # Tempo fixo para círculos, ajustar conforme necessário
-        # Adicionar outras formas conforme necessário
+    for path in paths:
+        tempo_corte += path.length()
     
-    # Tempo de corte simulado (em minutos)
-    tempo_corte = tempo_corte / 60  # Converte para minutos
-
+    # Convertendo o comprimento total para minutos (ajustar fator conforme necessário)
+    tempo_corte = tempo_corte / 100  # Ajustar o fator conforme necessário para minutos
+    
     # Definindo a complexidade com base no tempo de corte
     if tempo_corte < 10:
         return 1.05, tempo_corte
