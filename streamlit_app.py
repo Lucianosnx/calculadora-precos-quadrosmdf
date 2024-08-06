@@ -39,7 +39,7 @@ def calcular_preco(largura_cm, altura_cm, multiplicador, mackup, margem_lucro, q
 
     if tipo == 'Serviço':
         preco_anterior = preco_nota_fiscal
-        preco_nota_fiscal = round(preco_nota_fiscal * 2, 2)  #taxa de serviço
+        preco_nota_fiscal = round(preco_nota_fiscal * 2, 2)  # taxa de serviço
         diferenca_servico = round(preco_nota_fiscal - preco_anterior, 2)
         detalhes_precos.append(('Taxa de Serviço (+100%)', f"+ {diferenca_servico:.2f}"))
 
@@ -141,7 +141,7 @@ if tipo == 'Serviço':
     recorrencia = st.selectbox('Recorrência:', options=list(descontos_recorrencia_display.keys()), format_func=lambda x: f"{x} ({descontos_recorrencia_display[x]})")
 
 if largura_cm and altura_cm and svg_file is not None:
-    detalhes_precos, desconto_texto = calcular_preco(largura_cm, altura_cm, multiplicador, mackup, opcoes_lucro[margem_lucro[margem_lucro]], quantidade, recorrencia, tipo, tipo_usuario)
+    detalhes_precos, desconto_texto = calcular_preco(largura_cm, altura_cm, multiplicador, mackup, opcoes_lucro[margem_lucro], quantidade, recorrencia, tipo, tipo_usuario)
     
     df_precos = pd.DataFrame(detalhes_precos, columns=['Descrição', 'Preço (R$)'])
     st.table(df_precos)
