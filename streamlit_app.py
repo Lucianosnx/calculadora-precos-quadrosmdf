@@ -1,6 +1,6 @@
 import streamlit as st
 import pandas as pd
-from complexidade import calcular_complexidade
+from complexibilidade import calcular_complexidade
 import os
 
 def calcular_preco(largura_cm, altura_cm, multiplicador, mackup, margem_lucro, quantidade, recorrencia, tipo, tipo_usuario):
@@ -141,7 +141,7 @@ if tipo == 'Serviço':
     recorrencia = st.selectbox('Recorrência:', options=list(descontos_recorrencia_display.keys()), format_func=lambda x: f"{x} ({descontos_recorrencia_display[x]})")
 
 if largura_cm and altura_cm and svg_file is not None:
-    detalhes_precos, desconto_texto = calcular_preco(largura_cm, altura_cm, multiplicador, mackup, opcoes_lucro[margem_lucro], quantidade, recorrencia, tipo, tipo_usuario)
+    detalhes_precos, desconto_texto = calcular_preco(largura_cm, altura_cm, multiplicador, mackup, opcoes_lucro[margem_lucro[margem_lucro]], quantidade, recorrencia, tipo, tipo_usuario)
     
     df_precos = pd.DataFrame(detalhes_precos, columns=['Descrição', 'Preço (R$)'])
     st.table(df_precos)
