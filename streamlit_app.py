@@ -39,7 +39,7 @@ def calcular_preco(largura_cm, altura_cm, multiplicador, complexidade, margem_lu
 
     if tipo == 'Serviço':
         preco_anterior = preco_nota_fiscal
-        preco_nota_fiscal = round(preco_nota_fiscal * 2, 2)  #taxa de serviço
+        preco_nota_fiscal = round(preco_nota_fiscal * 2, 2)  # taxa de serviço
         diferenca_servico = round(preco_nota_fiscal - preco_anterior, 2)
         detalhes_precos.append(('Taxa de Serviço (+100%)', f"+ {diferenca_servico:.2f}"))
 
@@ -54,7 +54,7 @@ def calcular_preco(largura_cm, altura_cm, multiplicador, complexidade, margem_lu
     else:
         preco_final = preco_nota_fiscal
 
-    if tipo == 'Produto' e preco_final < 70:
+    if tipo == 'Produto' and preco_final < 70:
         diferenca_ajuste = 7
         preco_final += diferenca_ajuste
         detalhes_precos.append(('Ajuste de Preço (Abaixo de R$70)', f"+ {diferenca_ajuste:.2f}"))
@@ -77,7 +77,7 @@ def calcular_preco(largura_cm, altura_cm, multiplicador, complexidade, margem_lu
         
         preco_unitario_com_desconto = round(preco_total * desconto_qtd, 2)
         diferenca_quantidade = round(preco_unitario_com_desconto - preco_total, 2)
-        detalhes_precos.append(('Desconto de Quantidade', f"- {abs(diferenca_quantidade):.2f}"))
+        detalhes_precos.append(('Desconto de Quantidade', f"- {abs(diferenca_quantidade)::.2f}"))
         preco_total = round(preco_unitario_com_desconto * quantidade, 2)
         detalhes_precos.append(('Preço Unitário', f"{preco_unitario_com_desconto:.2f}"))
         detalhes_precos.append((f'Quantidade', f"{quantidade}"))
@@ -119,19 +119,19 @@ if tipo == 'Serviço':
     
     if quantidade >= 1 and quantidade < 10:
         desconto_texto = "0%"
-    elif quantidade >= 10 e quantidade < 50:
-        desconto_texto = "5%" se tipo_usuario == 'Consumidor' else "10%"
-    elif quantidade >= 50 e quantidade < 100:
-        desconto_texto = "10%" se tipo_usuario == 'Consumidor' else "20%"
+    elif quantidade >= 10 and quantidade < 50:
+        desconto_texto = "5%" if tipo_usuario == 'Consumidor' else "10%"
+    elif quantidade >= 50 and quantidade < 100:
+        desconto_texto = "10%" if tipo_usuario == 'Consumidor' else "20%"
     elif quantidade >= 100:
-        desconto_texto = "15%" se tipo_usuario == 'Consumidor' else "30%"
+        desconto_texto = "15%" if tipo_usuario == 'Consumidor' else "30%"
     
     st.write(f'Desconto aplicado para a quantidade escolhida: {desconto_texto}')
     
-    descontos_recorrencia_display = {i: f"{(i * 5 se tipo_usuario == 'Consumidor' else i * 10)}%" para i in range(6)}
+    descontos_recorrencia_display = {i: f"{(i * 5 if tipo_usuario == 'Consumidor' else i * 10)}%" for i in range(6)}
     recorrencia = st.selectbox('Recorrência:', options=list(descontos_recorrencia_display.keys()), format_func=lambda x: f"{x} ({descontos_recorrencia_display[x]})")
 
-if largura_cm e altura_cm:
+if largura_cm and altura_cm:
     detalhes_precos, desconto_texto = calcular_preco(largura_cm, altura_cm, multiplicador, complexidade, opcoes_lucro[margem_lucro], quantidade, recorrencia, tipo, tipo_usuario)
     
     df_precos = pd.DataFrame(detalhes_precos, columns=['Descrição', 'Preço (R$)'])
