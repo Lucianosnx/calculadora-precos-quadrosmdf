@@ -1,8 +1,8 @@
-from svgpathtools import svg2paths
+from svgpathtools import svg2paths2
 
-def calcular_complexidade(svg_file_path):
-    # Lê os caminhos (paths) do arquivo SVG
-    paths, _ = svg2paths(svg_file_path)
+def calcular_complexidade(svg_content):
+    # Lê os caminhos (paths) do conteúdo SVG
+    paths, _ = svg2paths2(svg_content)
     
     # Simulação de cálculo de tempo de corte com base no comprimento dos caminhos
     tempo_corte = 0

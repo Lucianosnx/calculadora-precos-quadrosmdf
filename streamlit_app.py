@@ -1,7 +1,6 @@
 import streamlit as st
 import pandas as pd
 from complexibilidade import calcular_complexidade
-import os
 
 def calcular_preco(largura_cm, altura_cm, multiplicador, mackup, margem_lucro, quantidade, recorrencia, tipo, tipo_usuario):
     area = largura_cm * altura_cm
@@ -95,11 +94,8 @@ altura_cm = st.number_input('Altura do quadro (em centímetros):', min_value=0.0
 svg_file = st.file_uploader("Upload do arquivo SVG:", type=["svg"])
 
 if svg_file is not None:
-    svg_path = os.path.join("/mnt/data", svg_file.name)
-    with open(svg_path, "wb") as f:
-        f.write(svg_file.getbuffer())
-    
-    mackup, tempo_corte = calcular_complexidade(svg_path)
+    svg_content = svg_file.read().decode('utf-8')
+    mackup, tempo_corte = calcular_complexidade(svg_content)
     st.write(f'Complexidade do Mackup: {mackup*100 - 100:.0f}%')
     st.write(f'Tempo de Corte: {tempo_corte:.2f} minutos')
     
